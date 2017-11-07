@@ -1,0 +1,71 @@
+
+body {
+  font-family: "Avant Garde", Avantgarde, "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+.container {
+  font-family: "Avant Garde", Avantgarde, "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  margin: 0 auto;
+  padding: 0 0 20px 0;
+  max-width: 70%;
+}
+
+#intro {
+  padding-top: 120px;
+}
+
+h1 {
+  font-size: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  animation: type 4s steps(60, end);
+}
+
+h2 {
+  font-size: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  animation: type 4s steps(60, end);
+}
+
+
+h3 {
+  font-size: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  animation: type 4s steps(60, end);
+}
+
+
+.btn {
+  background: #000;
+  border-color: transparent;
+  border-radius: 0px;
+  border-width: 2px;
+  padding: 10px 30px;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: all 1s ease;
+  margin: 10px 0px;
+  display: inline-block;
+  color: #fff;
+  cursor: pointer;
+}
+
+
+.btn-project:hover {
+  background: #555;
+}
+
+.btn:hover {
+  background: #777;
+}
+
