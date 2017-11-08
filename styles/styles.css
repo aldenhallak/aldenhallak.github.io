@@ -69,3 +69,17 @@ h3 {
   background: #777;
 }
 
+.footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+}
+
+.source {
+ font-size: 66%; 
+ float: right;
+}
