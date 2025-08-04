@@ -47,7 +47,8 @@
 
         <div class="post-content">
             <div class="post-image">
-                <img src="../images/drawafish-hero.jpg" alt="DrawAFish.com website screenshot - 100 hand drawn fish swimming in a tank." />
+                <img src="../images/drawafish-hero.jpg"
+                    alt="DrawAFish.com website screenshot - 100 hand drawn fish swimming in a tank." />
                 <p class="image-caption">DrawAFish.com</p>
             </div>
 
@@ -74,7 +75,8 @@
             <div class="post-image">
                 <img src="../images/hackernews-pointing.jpg"
                     alt="Post 'Show HN: Draw A Fish and watch it swim with the others' on the #1 spot of hacker news, highlighted, circled, lots of red arrows pointing to it." />
-                <p class="image-caption">Did you see? Did you see it? What it says? What it says on top of the website? Is it clear?</p>
+                <p class="image-caption">Did you see? Did you see it? What it says? What it says on top of the website?
+                </p>
             </div>
 
             <p>If you were on HackerNews on <a href="https://news.ycombinator.com/front?day=2025-08-01"
@@ -83,7 +85,7 @@
                     href="https://instagram.com/verybigandstrong" target="_blank">instagram</a>. You also probably saw
                 that I was in the #1 spot on Hackernews there too. Because I posted about it a lot. And also if you
                 talked to me in person you probably heard about it. And then you probably heard a lot of quotes from
-                "The Social Network (2010)" where I replaced the word "User" with "Fish."</p>
+                <i>The Social Network</i> (2010) where I replaced various words with "Fish."</p>
 
             <blockquote>
                 "A million fish isn't cool. You know what's cool? <a href="https://www.youtube.com/watch?v=4e0n7vTLz1U"
@@ -91,13 +93,15 @@
             </blockquote>
 
             <p>If you read the post on Hackernews, you saw that the website was an exercise in
-                vibe-coding. For Drawafish.com, I bought a Copilot pro subscription and went to work.</p>
+                vibe-coding. I used Copilot to implement features, and I used it to implement features <i>fast</i>.</p>
 
-            <p>At Google, like many other tech companies, we do "Blameless Postmortems." The problem with a Blameless
+            <p> In my career<sup><a href="#footnote-0" id="ref-0">[0]</a></sup>, I have learned the art of "Blameless
+                Postmortems." The problem with a Blameless
                 Postmortem is that it doesn't really work when you're the sole contributor. So this is a blameful
                 postmortem. And I blame me. (Not the LLM, sorry).</p>
 
-            <p>If you saw the website only on August 1, you probably do not understand why I need to write a postmortem at
+            <p>If you saw the website only on August 1, you probably do not understand why I need to write a postmortem
+                at
                 all. Everything went swimmingly (ha, ha). But if you had the displeasure of viewing my website between
                 the hours of 2AM (20 minutes after I went to sleep) and 8AM (when I woke up)<sup><a href="#footnote-1"
                         id="ref-1">[1]</a></sup> EST on Aug 3, then you would have seen chaos. Every single username was
@@ -107,7 +111,8 @@
             <h2>The Vulnerabilities</h2>
 
             <div class="post-image">
-                <img src="../images/hacked.jpg" alt="Screenshot showing a hacked user profile with username changed to 'Stinky Fart Man'" />
+                <img src="../images/hacked.jpg"
+                    alt="Screenshot showing a hacked user profile with username changed to 'Stinky Fart Man'" />
                 <p class="image-caption">This is not what they changed my username to. I'll let you use your
                     imagination.</p>
             </div>
@@ -116,7 +121,7 @@
                 <li>
                     <p><strong>Legacy admin password exposed in data breach:</strong> When creating the website, I used
                         my childhood username and my childhood 6-digit password for testing. I think the first time it
-                        leaked was on Neopets.com<sup><a href="#footnote-2" id="ref-2">[2]</a></sup>. I then set up
+                        leaked was on Neopets.com.<sup><a href="#footnote-2" id="ref-2">[2]</a></sup> I then set up
                         Google Auth. From then on, I only logged in with Google Auth. But the password remained. I
                         simply forgot. This allowed some of the most intelligent and brilliant minds on the internet to
                         find my password on the Neopets data leak paste, log in as an admin, and approve and disapprove
@@ -141,14 +146,15 @@
                         hackernews user @<a href="https://news.ycombinator.com/user?id=iceweaselfan44"
                             target="_blank">iceweaselfan44</a> used this vulnerability to authorize as an admin and
                         delete the really bad fish. He was awake, on the other side of the world, removing fish and
-                        helping out<sup><a href="#footnote-3" id="ref-3">[3]</a></sup>.</p>
+                        helping out.<sup><a href="#footnote-3" id="ref-3">[3]</a></sup></p>
                 </li>
             </ol>
 
             <h2>The Recovery</h2>
 
             <div class="post-image">
-                <img src="../images/moderation-logs.jpg" alt="A moderation log that shows a moderation action done at 3AM and undone in the morning." />
+                <img src="../images/moderation-logs.jpg"
+                    alt="A moderation log that shows a moderation action done at 3AM and undone in the morning." />
                 <p class="image-caption">Moderation logs. There are so many of these.</p>
             </div>
 
@@ -197,6 +203,9 @@
             </div>
 
             <hr>
+
+            <p><small><sup id="footnote-0">[0]</sup> Nearly 5 years at the same company. <a href="#ref-0">↩</a></small>
+            </p>
 
             <p><small><sup id="footnote-1">[1]</sup> I usually try to sleep more than this. I want to sleep more than
                     this. But my fancy "smart" ikea roller blinds that keep it dark at night and bright when I wake up
