@@ -141,9 +141,10 @@
 
                 <li>
                     <p><strong>JWT not tied to specific user:</strong> There was another security vulnerability - I
-                        authorized against a JWT token, but never confirmed that the JWT token belonged to the userId /
-                        email associated with it. While this was a mistake, it ended up saving me. Fortunately,
-                        hackernews user @<a href="https://news.ycombinator.com/user?id=iceweaselfan44"
+                        used the JWT to authorize login, but never confirmed that the JWT token belonged to the userId /
+                        email associated with it in the admin actions. So you could log in with my username and password,
+                        grab the JWT, and then send that along with your request. While this was a mistake, it ended up
+                        saving me. Fortunately, hackernews user @<a href="https://news.ycombinator.com/user?id=iceweaselfan44"
                             target="_blank">iceweaselfan44</a> used this vulnerability to authorize as an admin and
                         delete the really bad fish. He was awake, on the other side of the world, removing fish and
                         helping out.<sup><a href="#footnote-3" id="ref-3">[3]</a></sup></p>
