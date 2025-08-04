@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DrawAFish.com Postmortem — Aug 3, 2025 Incident - Alden Hallak</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-43844922-4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-43844922-4');
+    </script>
+    <meta charset="utf-8">
+    <meta name="author" content="Alden Hallak">
+    <meta name="description"
+        content="A blameful postmortem of the DrawAFish.com security incident - lessons learned from vibe coding gone wrong.">
+    <meta name="keywords"
+        content="DrawAFish, postmortem, security, web development, Google, draw a fish, software engineering, vibe coding">
+    <meta property="og:title" content="DrawAFish.com Postmortem — Aug 3, 2025 Incident">
+    <meta property="og:description"
+        content="A blameful postmortem of how my viral HackerNews project got compromised by legacy passwords, missing auth, and the perils of vibe coding.">
+    <meta property="og:image" content="https://aldenhallak.github.io/blog/images/drawafish-hero.jpg">
+    <meta property="og:url" content="https://aldenhallak.github.io/blog/posts/draw-a-fish-postmortem.html">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DrawAFish.com Postmortem — Aug 3, 2025 Incident">
+    <meta name="twitter:description"
+        content="A blameful postmortem of how my viral HackerNews project got compromised by legacy passwords, missing auth, and the perils of vibe coding.">
+    <meta name="twitter:image" content="https://aldenhallak.github.io/blog/images/drawafish-hero.jpg">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../styles/styles.css">
+    <link rel="stylesheet" href="../blog.css">
+</head>
+
+<body>
+    <nav class="navigation">
+        <a href="../index.html" class="nav-link">← Back to Blog</a>
+    </nav>
+
+    <div class="container post-container">
+        <header class="post-header">
+            <h1 class="post-title-full">DrawAFish.com Postmortem — Aug 3, 2025 Incident</h1>
+            <div class="post-date">August 4, 2025</div>
+        </header>
+
+        <div class="post-content">
+            <div class="post-image">
+                <img src="../images/drawafish-hero.jpg" alt="DrawAFish.com website screenshot - 100 hand drawn fish swimming in a tank." />
+                <p class="image-caption">DrawAFish.com</p>
+            </div>
+
+            <h2>TL;DR:</h2>
+            <ul>
+                <li><strong>Incident Duration:</strong> ~6 hours (2AM–8AM EST)</li>
+                <li><strong>Impact:</strong>
+                    <ul>
+                        <li>Username vandalism (slurs)</li>
+                        <li>Offensive fish approved / safe fish removed</li>
+                    </ul>
+                </li>
+                <li><strong>Root Causes:</strong>
+                    <ol>
+                        <li>Legacy 6-digit admin password exposed in past data breach</li>
+                        <li>Username update API lacked authentication</li>
+                        <li>JWT not tied to specific user</li>
+                    </ol>
+                </li>
+                <li><strong>Mitigation:</strong> Manual reversal of mod actions, fixed auth logic, backups reviewed</li>
+                <li><strong>Takeaway:</strong> hwoopsy daisy 🙂</li>
+            </ul>
+
+            <div class="post-image">
+                <img src="../images/hackernews-pointing.jpg"
+                    alt="Post 'Show HN: Draw A Fish and watch it swim with the others' on the #1 spot of hacker news, highlighted, circled, lots of red arrows pointing to it." />
+                <p class="image-caption">Did you see? Did you see it? What it says? What it says on top of the website? Is it clear?.</p>
+            </div>
+
+            <p>If you were on HackerNews on <a href="https://news.ycombinator.com/front?day=2025-08-01"
+                    target="_blank">Aug 1 2025</a>, you may have seen <a href="https://drawafish.com">DrawAFish.com</a>.
+                Because it was in the number 1 spot. You also may have seen it if you follow me on <a
+                    href="https://instagram.com/verybigandstrong" target="_blank">instagram</a>. You also probably saw
+                that I was in the #1 spot on Hackernews there too. Because I posted about it a lot. And also if you
+                talked to me in person you probably heard about it. And then you probably heard a lot of quotes from
+                "The Social Network (2010)" where I replaced the word "User" with "Fish."</p>
+
+            <blockquote>
+                "A million fish isn't cool. You know what's cool? <a href="https://www.youtube.com/watch?v=4e0n7vTLz1U"
+                    target="_blank">A billion fish</a>."
+            </blockquote>
+
+            <p>That being said, if you read the post on Hackernews, you saw that the website was also an exercise in
+                Vibe Coding. For Drawafish.com, I bought a Copilot pro subscription and went to work.</p>
+
+            <p>At Google, like many other tech companies, we do "Blameless Postmortems." The problem with a Blameless
+                Postmortem is that it doesn't really work when you're the sole contributor. So this is a blameful
+                postmortem. And I blame me. (Not the LLM, sorry).</p>
+
+            <p>If you saw the website on August 1, you probably do not understand why I need to write a postmortem at
+                all. Everything went swimmingly (ha, ha). But if you had the displeasure of viewing my website between
+                the hours of 2AM (20 minutes after I went to sleep) and 8AM (when I woke up)<sup><a href="#footnote-1"
+                        id="ref-1">[1]</a></sup> EST on Aug 3, then you would have seen chaos. Every single username was
+                transformed to a heinous slur, many unsavory fish had made it into the fishtank, and many beautiful fish
+                were gone. How did this happen?</p>
+
+            <h2>The Vulnerabilities</h2>
+
+            <div class="post-image">
+                <img src="../images/hacked.jpg" alt="Screenshot showing a hacked user profile with username changed to 'Stinky Fart Man'" />
+                <p class="image-caption">This is not what they changed my username to. I'll let you use your
+                    imagination.</p>
+            </div>
+
+            <ol>
+                <li>
+                    <p><strong>Legacy admin password exposed in data breach:</strong> When creating the website, I used
+                        my childhood username and my childhood 6-digit password for testing. I think the first time it
+                        leaked was on Neopets.com<sup><a href="#footnote-2" id="ref-2">[2]</a></sup>. I then set up
+                        Google Auth. From then on, I only logged in with Google Auth. But the password remained. I
+                        simply forgot. This allowed some of the most intelligent and brilliant minds on the internet to
+                        find my password on the Neopets data leak paste, log in as an admin, and approve and disapprove
+                        some really disgusting and horrible fish.</p>
+
+                    <p>On the plus side, the brilliant minds (while attempting to ban every single user) managed to
+                        accidentally ban themselves. So that vulnerability was only an active issue for an hour or so.
+                    </p>
+                </li>
+
+                <li>
+                    <p><strong>Username update API lacked authentication:</strong> I vibe coded the profile backend,
+                        which allows users to modify their username. I added this feature last minute, figured I'd
+                        review it later, and then didn't. The username modification did not perform any auth logic
+                        whatsoever. whoopsy</p>
+                </li>
+
+                <li>
+                    <p><strong>JWT not tied to specific user:</strong> There was another security vulnerability - I
+                        authorized against a JWT token, but never confirmed that the JWT token belonged to the userId /
+                        email associated with it. While this was a mistake, it ended up saving me. Fortunately,
+                        hackernews user @<a href="https://news.ycombinator.com/user?id=iceweaselfan44"
+                            target="_blank">iceweaselfan44</a> used this vulnerability to authorize as an admin and
+                        delete the really bad fish. He was awake, on the other side of the world, removing fish and
+                        helping out<sup><a href="#footnote-3" id="ref-3">[3]</a></sup>.</p>
+                </li>
+            </ol>
+
+            <h2>The Recovery</h2>
+
+            <div class="post-image">
+                <img src="../images/moderation-logs.jpg" alt="A moderation log that shows a moderation action done at 3AM and undone in the morning." />
+                <p class="image-caption">Moderation logs. There are so many of these.</p>
+            </div>
+
+            <p>I woke up at around 7:45 am, saw a couple pings and messages, and immediately rushed to my desktop<sup><a
+                        href="#footnote-4" id="ref-4">[4]</a></sup>. Fortunately, I had set up firebase backups.
+                Unfortunately, I had set them up wrong. I spent a good hour or so diagnosing the errors and then quickly
+                pushed changes to require authentication.</p>
+
+            <p>I had a mod log set up, so undoing the changes was as simple as writing an annoying script that just
+                undid all the mod actions. Did I learn my lesson about vibe coding? Maybe. I vibe coded the script,
+                looked over the code, and did a dry run first.</p>
+
+            <p>I banned the other mod account ran by IceWeasel<sup><a href="#footnote-5" id="ref-5">[5]</a></sup> and
+                patched the JWT bug - at which point he reached out to me and explained how he created it. We then
+                hopped on a call and he took a look at the codebase, where he expertly suggested a refactor that would
+                be more idiomatic with current security practices. And then when I blindly pushed it and it broke
+                everything, he expertly committed some more changes that fixed it.</p>
+
+            <h2>Reflection</h2>
+
+            <p>At this point, you're probably thinking: geeze man. Wow. you gotta be stupid.</p>
+
+            <p>And I'd like to get on my hands and knees and beg for your suspension of belief when I say: yes I am but
+                not when it comes to my job. It's really fun to just have high velocity, and it's really fun to not do
+                code reviews and to just push stuff. Sometimes it feels like all I do at work is review code and write
+                docs - and the code I write at work is lately deeply within legacy systems and makes my brain hurt
+                sometimes. I have good reviews! Just ask my coworkers! The ones that hate me hate me because I leave TOO
+                many comments and am TOO thorough (or they are jealous of my handsome good looks and devilish charm).
+            </p>
+
+            <p>So when I decided to learn how to build on GCP and vibe code a small app that I figured a handful of
+                people would see, I took it easy on the code reviews. I let Copilot do all the work, I wrote no tests,
+                and instead of writing TODOs and Documentation I simply said "I'll remember to change my password / add
+                auth / understand this code later." And then I didn't do that. Whoops!</p>
+
+            <p>It would be very nice for my ego to blame the LLM here. But LLMs are a tool. They let you generate a lot
+                of code really fast, and sometimes that's good. Sometimes it is not. And it's up to you to review it,
+                and decide what code gets committed.</p>
+
+            <!-- Lessons learned image suggestion: Meme or infographic about vibe coding vs proper development -->
+            <div class="post-image">
+                <img src="../images/llms-dont-commit.jpg"
+                    alt="Very crudely draw MS-Paint sticker for 'LLMs don't commit code, people do'. It's drawn over a sticker that says 'Guns don't kill people, people do.'" />
+                <p class="image-caption">I am selling these stickers for 100 dollars each. Please reach out to purchase
+                    them.</p>
+            </div>
+
+            <hr>
+
+            <p><small><sup id="footnote-1">[1]</sup> I usually try to sleep more than this. I want to sleep more than
+                    this. But my fancy "smart" ikea roller blinds that keep it dark at night and bright when I wake up
+                    fell down because I taped them to the wall very poorly. <a href="#ref-1">↩</a></small></p>
+
+            <p><small><sup id="footnote-2">[2]</sup> I remember being a kid and forgetting my password and thinking "wow
+                    it's nice how they just email you your password, instead of resetting it. More websites should do
+                    that." <a href="#ref-2">↩</a></small></p>
+
+            <p><small><sup id="footnote-3">[3]</sup> The JWT token issue was the only vuln that really required knowing
+                    how anything worked. I don't think it's a coincidence that there was a correlation between being a
+                    studious / diligent person and actively being a helpful force. <a href="#ref-3">↩</a></small></p>
+
+            <p><small><sup id="footnote-4">[4]</sup> Which is next to my bed. I live in New York.<sup><a
+                            href="#footnote-4a" id="ref-4a">[4a]</a></sup><br>
+                    <sup id="footnote-4a">[4a]</sup> You may have heard differently, especially if you saw my <a
+                        href="https://imgur.com/WDqhtIu.jpg" target="_blank">doxxing</a><sup><a href="#footnote-4b"
+                            id="ref-4b">[4b]</a></sup> on the unsavory website. Fortunately, my publicly listed
+                    information appears to be a little out of date. <a
+                        href="https://x.com/MCBananaPeelZ/status/1774139530041303368" target="_blank">The first time I
+                        was doxxed</a> was much scarier. <a href="#ref-4a">↩</a><br>
+                    <sup id="footnote-4b">[4b]</sup> To be fair, I deserved the doxxing for removing the weird and
+                    offensive fish and slurs. <a href="#ref-4b">↩</a> <a href="#ref-4">↩</a></small></p>
+
+            <p><small><sup id="footnote-5">[5]</sup> Only because it had no identifying information at all - just didn't
+                    know who this person was. He reached out later and we chatted over discord and now we're cool. <a
+                        href="#ref-5">↩</a></small></p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="copyright">Alden Hallak 2025</div>
+        <div class="source"><a href="https://github.com/aldenhallak/aldenhallak.github.io">view source code</a></div>
+    </div>
+</body>
+
+</html>

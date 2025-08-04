@@ -19,27 +19,30 @@ body {
 
 h1 {
   font-size: 40px;
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: normal;
   width: 100%;
   animation: type 4s steps(60, end);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 h2 {
   font-size: 30px;
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: normal;
   width: 100%;
   animation: type 4s steps(60, end);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 
 h3 {
   font-size: 20px;
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: normal;
   width: 100%;
   animation: type 4s steps(60, end);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 
