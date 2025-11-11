@@ -92,9 +92,9 @@
 
             <p> The solution hit me like a regular amount of bricks: <b>I needed to automate my buzzer</b>. And I should be able to trigger it remotely! So I went to the drawing board.</p>
 
-            <p>I have a Hubitat in my apartment, which I use to connect to my Ikea blinds<sup><a href="#footnote-3" id="ref-3">[3]</a></sup> and my lightbulb.<sup><a href="#footnote-4" id="ref-4">[4]</a></sup> So I had an ecosystem for home automation already set up -- first step down.</p>
+            <p>I have a Hubitat in my apartment, which I use to connect to my IKEA blinds<sup><a href="#footnote-3" id="ref-3">[3]</a></sup> and my lightbulb.<sup><a href="#footnote-4" id="ref-4">[4]</a></sup> So I had an ecosystem for home automation already set up -- first step down.</p>
 
-            <p>Second thing I had to figure out was how I could actually automate my buzzer. I have no experience with hardware whatsoever.<sup><a href="#footnote-5" id="ref-5">[5]</a></sup> I figured -- I push a button to open the door, and buttons just close circuits, so that's probably what's going on there. I could probably automate that. And I'm probably not the first one to do it -- so I hit Google. And I found a guy named Chris Whong who's pretty much <a href="https://chris-m-whong.medium.com/connecting-an-apartment-door-buzzer-to-a-smarthome-hub-4664cf6a3ce4" target="_blank">done it before</a>. So, easy enough -- just gotta follow his instructions. Except he used hardware I don't have, but I have ESP32s lying around and I discovered that some lovely individual maintains an <a href="https://github.com/DanielOgorchock/ST_Anything/tree/master" target="_blank">open source repository</a> for connecting ESP32s to Hubitat. So the decision was made -- using Chris Whong's medium guide as a source, I'd build:
+            <p>Second thing I had to figure out was how I could actually automate my buzzer. I have no experience with hardware whatsoever.<sup><a href="#footnote-5" id="ref-5">[5]</a></sup> I figured -- I push a button to open the door, and buttons just close circuits, so that's probably what's going on there. I could probably automate that. And I'm probably not the first one to do it -- so I hit Google. And I found a guy named Chris Whong who's pretty much <a href="https://chris-m-whong.medium.com/connecting-an-apartment-door-buzzer-to-a-smarthome-hub-4664cf6a3ce4" target="_blank">done it before</a>. So, easy enough -- just gotta follow his instructions. Except he used hardware I don't have, but I have ESP32s lying around and I discovered that some lovely individual maintains an <a href="https://github.com/DanielOgorchock/ST_Anything/tree/master" target="_blank">open source repository</a> for connecting ESP32s to Hubitat. So the decision was made -- using Chris Whong's Medium guide as a source, I'd build:
 
             <ul>
                 <li>A switch to open my door from my phone.</li>
@@ -125,17 +125,17 @@
 
             <h3 id="step3">Step 3: Learn how to do all the stuff that was actually really hard</h3>
 
-            <p>Hubris. A natural consequence of constantly standing on the shoulders of giants. I had been living a lie -- building circuits on third base thinking I had hit a triple. I figured I'd be able to follow Chris' post, but reading through his medium article over and over again I realized I lacked the sufficient understanding of hardware concepts to comprehend how to finish the project. So I winged it: I decided that I would simply listen for an analog signal through one of the ESP32 ports, and then I'd use a transistor to close the circuit that opened the door.<sup><a href="#footnote-9" id="ref-9">[9]</a></sup></p>
+            <p>Hubris. A natural consequence of constantly standing on the shoulders of giants. I had been living a lie -- building circuits on third base thinking I had hit a triple. I figured I'd be able to follow Chris' post, but reading through his medium article over and over again I realized I lacked the sufficient understanding of hardware concepts to comprehend how to finish the project. So I winged it: I decided that I would simply listen for an analog signal through one of the ESP32 ports, and then I'd use a transistor to close the circuit that opened the door.<sup><a href="#footnote-8" id="ref-8">[8]</a></sup></p>
 
             <p>I went ahead and built my first iteration: an ESP32 that would send a pulse to a transistor that would bridge two wires and unlocking the door. The only problem was the circuit would close haphazardly, almost randomly. Fortunately, years of software development had prepared me for this -- I decided to add resistors until it worked.<sup><a href="#footnote-9" id="ref-9">[9]</a></sup></p>
 
             <div class="post-image">
                 <img src="../images/circuitboard-2.png"
                     alt="Circuit board with resistors added to prevent automatic triggering" />
-                <p class="image-caption">Adding resistors until it worked (sort of).</p>
+                <p class="image-caption">I ended up just using one of the really big resistors.</p>
             </div>
 
-            <p>Once the buzzing was complete, I had to listen for the signal, so I could let people in automatically at parties, and I could know when delivery people were at my door and buzz if they were close on whatever respective delivery service they were at. I read into how to listen for digital / analog signals on my ESP32, and then I hooked up the wires. Unfortunately, the buzzer seemed to always be sending some sort of signal. So I once again utilized my years of software development experience and added resistors until it stopped doing that.</p>
+            <p>Once the buzzing was complete I had to listen for the signal so I could let people in automatically at parties, and I could know when delivery people were at my door and buzz if they were close on whatever respective delivery service they were at. I read into how to listen for digital / analog signals on my ESP32, and then I hooked up the wires. Unfortunately, the buzzer seemed to always be sending some sort of signal. So I once again utilized my years of software development experience and added resistors until it stopped doing that.</p>
 
             <div class="post-image">
                 <img src="../images/circuitboard-3.png"
@@ -153,7 +153,7 @@
 
             <p>And it worked! And I was very proud of myself. Sure, the physical buzzer didn't work for some reason when it was plugged in, but I would never need to use my physical buzzer again with Alexa Integration and iPhone Integration and as I mused about how I would work around everything the "Button Pressed!" notification popped up again and again and again regardless of whether or not anything was being pressed and I realized that perhaps my system was flawed.</p>
 
-            <p>I looked at Chris's post once more and saw that there was some complicated circuitry that I didn't understand. I tried using LLMs to tell me what I needed to do, but they responded with hallucinated and confusing responses. I resolved to learn about it and tackle the problem later.</p>
+            <p>I looked at Chris' post once more and saw that there was some complicated circuitry that I didn't understand. I tried using LLMs to tell me what I needed to do, but they responded with hallucinated and confusing responses. I resolved to learn about it and tackle the problem later.</p>
 
             <h3 id="step4">Step 4: Living with this solution for like a year</h3>
 
@@ -169,9 +169,9 @@
                 <p class="image-caption">Asking ChatGPT for help.</p>
             </div>
 
-            <p>It immediately returned a step by step guide (that was completely wrong). It made a lot of assumptions -- it assumed I was connecting wires directly to the ESP32, it assumed that the signal was 24 VAC<sup><a href="#footnote-12" id="ref-12">[12]</a></sup> -- which I knew was wrong, because I had read the medium piece. But then I realized! I read the medium piece! Maybe I could use that in conjunction with ChatGPT…</p>
+            <p>It immediately returned a step by step guide (that was completely wrong). It made a lot of assumptions -- it assumed I was connecting wires directly to the ESP32, it assumed that the signal was 24 VAC<sup><a href="#footnote-12" id="ref-12">[12]</a></sup> -- which I knew was wrong, because I had read the Medium piece. But then I realized! I read the Medium piece! Maybe I could use that in conjunction with ChatGPT…</p>
 
-            <p>And so I did -- I fed Chris' medium article alongside a list of the supplies I had in my AliExpress electronics kit and the Arduino code I had written into ChatGPT, and out it spat:</p>
+            <p>And so I did -- I fed Chris' Medium article alongside a list of the supplies I had in my AliExpress electronics kit and the Arduino code I had written into ChatGPT, and out it spat:</p>
 
             <div class="post-image">
                 <img src="../images/chatgpt-diagram.png"
@@ -203,11 +203,11 @@
 
             <p>The answer is -- I don't know, no clue, no idea. I managed to get this whole thing working without really having a deep understanding of what I was doing. I don't really understand pull-up resistors, optocouplers, pulsed DC. It leaves a queasy feeling in my stomach.</p>
 
-            <p>Growing up as early gen Z, I spent a lot of time on the internet having been given almost entirely free range by my loving but clueless parents. I sometimes wonder if this ruined my brain. Whenever I had a question, I'd always pop over to Google to answer it -- when I chatted with my friends online, I'd be a repository of knowledge. Then when it came to in person chatting I vaguely knew a lot of things but felt neutered without the internet.</p>
+            <p>Growing up as early gen Z, I spent a lot of time on the internet having been given almost entirely free range by my loving but clueless parents. I sometimes wonder if this ruined my brain. Whenever I had a question, I'd always pop over to Google to answer it -- when I chatted with my friends online, I'd be a repository of knowledge. Then when it came to in person chatting I vaguely knew a lot of things but felt neutered without the web.<sup><a href="#footnote-14" id="ref-14">[14]</a></sup></p>
 
             <p>I developed a dependency on the internet. And to this day, I have a terrible memory but I'm very fast at getting things done and quick to Google.</p>
 
-            <p>In this regard, ChatGPT is like Google but superpowered. I can do even more while understanding even less. I can't speak to the repercussions of it. All I know is that now I can open my door from my apple watch while carrying my bike.</p>
+            <p>In this regard, ChatGPT is like Google but superpowered. I can do even more while understanding even less. I can't speak to the repercussions of it. All I know is that now I can open my door from my Apple Watch while carrying my bike.</p>
 
             <hr>
 
@@ -236,6 +236,8 @@
             <p><small><sup id="footnote-12">[12]</sup> I don't know what that means, but I know it's wrong. <a href="#ref-12">↩</a></small></p>
 
             <p><small><sup id="footnote-13">[13]</sup> You can view the <a href="https://chatgpt.com/share/690234e8-3e80-8012-bccc-15c5f6ac2b10" target="_blank">full ChatGPT conversation here</a>. <a href="#ref-13">↩</a></small></p>
+
+            <p><small><sup id="footnote-14">[14]</sup> In this way I was like a spider. ha, ha. <a href="#ref-14">↩</a></small></p>
         </div>
     </div>
 
