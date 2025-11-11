@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
 // Blog posts data - in a real application, this would come from a CMS or API
 const blogPosts = [
     {
+        id: 2,
+        title: "Automating My Buzzer: Learning Hardware with ChatGPT",
+        displayTitle: "Automating My Buzzer",
+        date: "2025-11-11",
+        excerpt: "How I automated my apartment buzzer using ESP32s, ChatGPT, and a willingness to add resistors until things worked.",
+        filename: "automating-my-buzzer",
+        thumbnail: "images/breadboard-complete.png"
+    },
+    {
         id: 1,
         title: "DrawAFish.com Postmortem — Aug 3, 2025 Incident",
         displayTitle: "DrawAFish.com Postmortem",

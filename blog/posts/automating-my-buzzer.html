@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Automating My Buzzer: Learning Hardware with ChatGPT - Alden Hallak</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-43844922-4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-43844922-4');
+    </script>
+    <meta charset="utf-8">
+    <meta name="author" content="Alden Hallak">
+    <meta name="description"
+        content="How I automated my apartment buzzer using ESP32s, ChatGPT, and a willingness to add resistors until things worked.">
+    <meta name="keywords"
+        content="hardware, ESP32, ChatGPT, home automation, DIY, buzzer, Hubitat, Arduino, IoT">
+    <meta property="og:title" content="Automating My Buzzer: Learning Hardware with ChatGPT">
+    <meta property="og:description"
+        content="How I automated my apartment buzzer using ESP32s, ChatGPT, and a willingness to add resistors until things worked.">
+    <meta property="og:image" content="https://aldenhallak.github.io/blog/images/buzzer-hero.jpg">
+    <meta property="og:url" content="https://aldenhallak.github.io/blog/posts/automating-my-buzzer.html">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Automating My Buzzer: Learning Hardware with ChatGPT">
+    <meta name="twitter:description"
+        content="How I automated my apartment buzzer using ESP32s, ChatGPT, and a willingness to add resistors until things worked.">
+    <meta name="twitter:image" content="https://aldenhallak.github.io/blog/images/buzzer-hero.jpg">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../styles/styles.css">
+    <link rel="stylesheet" href="../blog.css">
+</head>
+
+<body>
+    <nav class="navigation">
+        <a href="../index.html" class="nav-link">← Back to Blog</a>
+    </nav>
+
+    <div class="container post-container">
+        <header class="post-header">
+            <h1 class="post-title-full">Automating My Buzzer: Learning Hardware with ChatGPT</h1>
+            <div class="post-date">November 11, 2025</div>
+        </header>
+
+        <div class="post-content">
+            <div class="post-image">
+                <img src="../images/breadboard-complete.png"
+                    alt="Final working breadboard setup with ESP32 connected to buzzer" />
+                <p class="image-caption">You'll see this again.</p>
+            </div>
+
+            <p>In this post, I'll talk about how and why I automated my NYC Apartment Buzzer using ESP32s, Hubitat, ChatGPT, and The Indomitable Human Spirit / guessing.</p>
+
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                <h3 style="margin-top: 0;">Table of Contents</h3>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 12px;"><a href="#stories" style="text-decoration: none; color: #333;"><strong>The Problems</strong></a> — Three linked by a common thread</li>
+                    <li style="margin-bottom: 6px; padding-left: 20px;"><a href="#problem1" style="text-decoration: none; color: #666;">Problem 1: The Party Problem</a></li>
+                    <li style="margin-bottom: 6px; padding-left: 20px;"><a href="#problem2" style="text-decoration: none; color: #666;">Problem 2: The Bike Problem</a></li>
+                    <li style="margin-bottom: 12px; padding-left: 20px;"><a href="#problem3" style="text-decoration: none; color: #666;">Problem 3: The Package Problem</a></li>
+                    <li style="margin-bottom: 12px;"><a href="#solution" style="text-decoration: none; color: #333;"><strong>The Solution</strong></a> — Building a smart buzzer with ESP32s, Hubitat, and a can-do attitude / smile</li>
+                    <li style="margin-bottom: 12px;"><a href="#technical" style="text-decoration: none; color: #333;"><strong>The Technical Stuff</strong></a> — Building out the solution and the challenges within</li>
+                    <li style="margin-bottom: 6px; padding-left: 20px;"><a href="#step1" style="text-decoration: none; color: #666;">Step 1: Learn how to close a circuit with an ESP32</a></li>
+                    <li style="margin-bottom: 6px; padding-left: 20px;"><a href="#step2" style="text-decoration: none; color: #666;">Step 2: Learn how to trigger a pulse from Hubduino</a></li>
+                    <li style="margin-bottom: 6px; padding-left: 20px;"><a href="#step3" style="text-decoration: none; color: #666;">Step 3: Learn how to do all the stuff that was actually really hard</a></li>
+                    <li style="margin-bottom: 6px; padding-left: 20px;"><a href="#step4" style="text-decoration: none; color: #666;">Step 4: Living with this solution for like a year</a></li>
+                    <li style="margin-bottom: 12px; padding-left: 20px;"><a href="#step5" style="text-decoration: none; color: #666;">Step 5: ChatGPT</a></li>
+                    <li style="margin-bottom: 0;"><a href="#learnings" style="text-decoration: none; color: #333;"><strong>Learnings</strong></a> — What I learned (nothing) and what it means (everything?).</li>
+                </ul>
+            </div>
+
+            <h2 id="stories">The Problems</h2>
+
+            <p> I had three problems that all stemmed from the same issue. In this post, I will talk about the challenges I faced, the solution I came up with, the building out of the solution, and the learnings I took away. </p>
+
+            <h3 id="problem1">Problem 1: The Party Problem</h3>
+
+            <p>I have always had a natural inclination to hosting. I live in a nice one bedroom in Bushwick, and I have befriended my neighbors, and every other week or so I have them over for movie nights. Nothing too grand - perhaps 8 or so people maximum. That being said, a few times a year I like to really stress test my relationship with my upstairs / downstairs neighbors by throwing a big party and inviting pretty much anyone who I've made eye contact with in the past few months. The problem is, someone always has to be by the buzzer at these events - and as they get rowdy, the buzzer gets quiet and then people are just calling me to be let in because nobody is hearing the buzzer or letting people in. This also leads to additional annoyance from my neighbors as people are now on my stoop / buzzing random doors in the building.</p>
+
+            <h3 id="problem2">Problem 2: The Bike Problem</h3>
+
+            <p>I also love to bike. I like to bike to my office (about 30 minutes), and I also bike back (45 minutes).<sup><a href="#footnote-0" id="ref-0">[0]</a></sup> When I get back on my bike, I am tired, sweaty, and really really tired. I store my bike on my apartment on the second floor. The worst thing in the world is when I get home from a bike ride, and then have to get my keys from my backpack (they usually manage to wiggle their way to the bottom), and then I carry my bike in one hand and my keys in the other as I try to open the door with one quick action, buttressing the door with my bike and then squeezing through and putting my keys back in my bag as I readjust to bring the bike up to the second floor where I can tie it up like a horse outside my apartment.</p>
+
+            <h3 id="problem3">Problem 3: The Package Problem</h3>
+
+            <p>As you can maybe tell by my bike carrying situation, my building was constructed in the 1930s. It does not have a doorman. It barely has internet.<sup><a href="#footnote-1" id="ref-1">[1]</a></sup> When a package gets delivered, the delivery person will buzz the intercom to your apartment, wait about 30 seconds, and if you're not at home the delivery person will leave your package on the stoop. This is a great system for many of the people who hang out in my neighborhood, as this means free stuff pretty much every day of the week. That being said, I love my apartment, and have no intention of moving out.<sup><a href="#footnote-2" id="ref-2">[2]</a></sup></p>
+
+            <h2 id="solution">The Solution</h2>
+
+            <p> The solution hit me like a regular amount of bricks: <b>I needed to automate my buzzer</b>. And I should be able to trigger it remotely! So I went to the drawing board.</p>
+
+            <p>I have a Hubitat in my apartment, which I use to connect to my Ikea blinds<sup><a href="#footnote-3" id="ref-3">[3]</a></sup> and my lightbulb.<sup><a href="#footnote-4" id="ref-4">[4]</a></sup> So I had an ecosystem for home automation already set up - first step down.</p>
+
+            <p>Second thing I had to figure out was how I could actually automate my buzzer. I have no experience with hardware whatsoever.<sup><a href="#footnote-5" id="ref-5">[5]</a></sup> I figured - I push a button to open the door, and buttons just close circuits, so that's probably what's going on there. I could probably automate that. And I'm probably not the first one to do it - so I hit Google. And I found a guy named Chris Whong who's pretty much <a href="https://chris-m-whong.medium.com/connecting-an-apartment-door-buzzer-to-a-smarthome-hub-4664cf6a3ce4" target="_blank">done it before</a>. So, easy enough -- just gotta follow his instructions. Except he used hardware I don't have, but I have ESP32s lying around and I discovered that some lovely individual maintains an <a href="https://github.com/DanielOgorchock/ST_Anything/tree/master" target="_blank">open source repository</a> for connecting ESP32s to Hubitat. So the decision was made - using Chris Whong's medium guide as a source, I'd build:
+
+            <ul>
+                <li>A switch to open my door from my phone.</li>
+                <li>A listener to tell me when there was a buzz.</li>
+                <li>Software so that when there was a buzz and I'm having a party, people could be let in automatically.</li>
+            </ul>
+
+            <p>I tackled this in steps.</p>
+
+            <h2 id="technical">The Technical Stuff</h2>
+
+            <h3 id="step1">Step 1: Learn how to close a circuit with an ESP32</h3>
+
+            <p>I downloaded Arduino IDE on my Mac. I downloaded the drivers. I learned what the little numbers meant on the sides of the ESP32 and I learned how to read and write from the outputs. I got my breadboard, my little wires, and a transistor, which is the only hardware thing I know about (thank you, Bachelor of Arts in English and Computer Science).</p>
+
+            <div class="post-image">
+                <img src="../images/circuitboard-1.png"
+                    alt="First circuit board with ESP32 and transistor that triggers an LED."
+                    style="max-width: 50%; transform: rotate(-90deg);" />
+                <p class="image-caption">My first circuit - a transistor and an ESP32.</p>
+            </div>
+
+            <p>This was pretty quick. I admittedly did have to google "How do transistors work" (I am still thankful for my BA).</p>
+
+            <h3 id="step2">Step 2: Learn how to trigger a pulse from Hubduino</h3>
+
+            <p>This was also not so bad. I followed the instructions for setting up the Hubduino drivers on my Hubitat as well as on my library for my Arduino. Then, after a little bit of trial and error, I set up the ability to send a pulse through the circuit, turning on an LED using the power of my phone! Yay! Hardware wasn't that scary after all. I lamented the fact that I had let my ESP32s sit in my apartment for about a year, that I never did all the little projects I thought I was going to do. I realized that all those people on twitter<sup><a href="#footnote-7" id="ref-7">[7]</a></sup> were right - everything is actually really easy, being a CS guy means you can do anything, everything's online and not only is nothing impossible but actually everything is really easy.</p>
+
+            <h3 id="step3">Step 3: Learn how to do all the stuff that was actually really hard</h3>
+
+            <p>Hubris. A natural consequence of constantly standing on the shoulders of giants. I had been living a lie -- building circuits on third base thinking I had hit a triple. I figured I'd be able to follow Chris' post, but reading through his medium article over and over again I realized I lacked the sufficient understanding of hardware concepts to comprehend how to finish the project. So I winged it: I decided that I would simply listen for an analog signal through one of the ESP32 ports, and then I'd use a transistor to close the circuit that opened the door.<sup><a href="#footnote-9" id="ref-9">[9]</a></sup></p>
+
+            <p>I went ahead and built my first iteration: an ESP32 that would send a pulse to a transistor that would bridge two wires and unlocking the door. The only problem was the circuit would close haphazardly, almost randomly. Fortunately, years of software development had prepared me for this - I decided to add resistors until it worked.<sup><a href="#footnote-9" id="ref-9">[9]</a></sup></p>
+
+            <div class="post-image">
+                <img src="../images/circuitboard-2.png"
+                    alt="Circuit board with resistors added to prevent automatic triggering" />
+                <p class="image-caption">Adding resistors until it worked (sort of).</p>
+            </div>
+
+            <p>Once the buzzing was complete, I had to listen for the signal, so I could let people in automatically at parties, and I could know when delivery people were at my door and buzz if they were close on whatever respective delivery service they were at. I read into how to listen for digital / analog signals on my ESP32, and then I hooked up the wires. Unfortunately, the buzzer seemed to always be sending some sort of signal. So I once again utilized my years of software development experience and added resistors until it stopped doing that.</p>
+
+            <div class="post-image">
+                <img src="../images/circuitboard-3.png"
+                    alt="Circuit board with additional resistors to filter the buzzer signal" />
+                <p class="image-caption">I have a natural gift for circuit design.</p>
+            </div>
+
+            <p>I measured the outputs for a minute, set up some logic on Hubitat, and went downstairs and buzzed:</p>
+
+            <div class="post-image">
+                <img src="../images/notification.png"
+                    alt="iPhone notification showing 'Button Pressed!' alert" />
+                <p class="image-caption">Sometimes you get a text that's really bad like it's about someone dying or something. This was like the opposite of that feeling.</p>
+            </div>
+
+            <p>And it worked! And I was very proud of myself. Sure, the physical buzzer didn't work for some reason when it was plugged in, but I would never need to use my physical buzzer again with Alexa Integration and iPhone Integration and as I mused about how I would work around everything the "Button Pressed!" notification popped up again and again and again regardless of whether or not anything was being pressed and I realized that perhaps my system was flawed.</p>
+
+            <p>I looked at Chris's post again, and saw that there was some complicated circuitry that I didn't understand. I tried using LLMs to tell me what I needed to do, but they responded with hallucinated and confusing responses. I resolved to learn about it and tackle the problem later.</p>
+
+            <h3 id="step4">Step 4: Living with this solution for like a year</h3>
+
+            <p>That's about where I ended up in 2024. I basically kept the circuit unplugged all the time, except when I was throwing parties, in which case the false positives on the buzzer were fine. The solution wasn't what I wanted it to be, but it still looked cool at parties<sup><a href="#footnote-11" id="ref-11">[11]</a></sup> and worked fine enough then. I got much better at opening my door with my bike and accepted that I would simply work from home on days with important packages.</p>
+
+            <h3 id="step5">Step 5: ChatGPT</h3>
+
+            <p>A year ago, I tried asking ChatGPT for help with this project. It was not very helpful. Maybe I asked it wrong, maybe I wanted to give up, maybe I was happy with where it was - all I know is that I couldn't get it to work. A week ago, I decided to give it another shot. I asked it:</p>
+
+                        <div class="post-image">
+                <img src="../images/chatgpt-message.png"
+                    alt="ChatGPT conversation asking for help with buzzer automation" />
+                <p class="image-caption">Asking ChatGPT for help.</p>
+            </div>
+
+            <p>It immediately returned a step by step guide (that was completely wrong). It made a lot of assumptions - it assumed I was connecting wires directly to the ESP32, it assumed that the signal was 24 VAC<sup><a href="#footnote-12" id="ref-12">[12]</a></sup> -- which I knew was wrong, because I had read the medium piece. But then I realized! I read the medium piece! Maybe I could use that in conjunction with ChatGPT…</p>
+
+            <p>And so I did - I fed Chris' medium article alongside a list of the supplies I had in my AliExpress electronics kit and the Arduino code I had written into ChatGPT, and out it spat:</p>
+
+            <div class="post-image">
+                <img src="../images/chatgpt-diagram.png"
+                    alt="ChatGPT generated circuit diagram showing ESP32 wiring" />
+                <p class="image-caption">ChatGPT's beautiful diagram that didn't work at all.</p>
+            </div>
+
+            <p>Amazing! It told me exactly what I needed to do to read the signal - AND it gave me a diagram. So I wired up everything and gave it a shot -- and it didn't work.</p>
+
+            <p>But then I checked through the code I wrote for the original ESP32, and I checked the response, and I realized -- what ChatGPT described for the code wasn't what the code did.</p>
+
+            <div class="post-image">
+                <img src="../images/chatgpt-debugging.png"
+                    alt="Back and forth ChatGPT conversation debugging the code" />
+                <p class="image-caption">The back and forth that finally made it work.</p>
+            </div>
+
+            <p>And then yayyyy! It worked.<sup><a href="#footnote-13" id="ref-13">[13]</a></sup></p>
+
+            <div class="post-image">
+                <img src="../images/breadboard-complete.png"
+                    alt="Final working breadboard setup with ESP32 connected to buzzer" />
+                <p class="image-caption">Now you have the context to really appreciate this picture. Isn't it nice.</p>
+            </div>
+
+            <h2 id="learnings">Learnings</h2>
+
+            <p>Now, you may be asking -- how does this all work? What are the mechanisms? What did you learn?</p>
+
+            <p>The answer is -- I don't know, no clue, no idea. I managed to get this whole thing working without really having a deep understanding of what I was doing. I don't really understand pull-up resistors, optocouplers, pulsed DC. It kinda leaves a queasy feeling in my stomach.</p>
+
+            <p>Growing up as early gen Z, I spent a lot of time on the internet, having been given almost entirely free range by my loving but clueless parents. I sometimes wonder if this ruined my brain. Whenever I had a question, I'd always pop over to Google to answer it -- when I chatted with my friends online, I'd be a repository of knowledge. Then when it came to in person chatting, I vaguely knew a lot of things but without constant access to the internet, I felt neutered.</p>
+
+            <p>I developed a dependency on the internet. And to this day, I have a terrible memory, but I'm very fast at getting things done, and quick to Google.</p>
+
+            <p>In this regard, ChatGPT is like Google but superpowered. I can do even more while understanding even less. I can't speak to the repercussions of it. All I know is that now I can open my door from my apple watch while carrying my bike.</p>
+
+            <hr>
+
+            <p><small><sup id="footnote-0">[0]</sup> It could probably take 30 minutes to bike back, but after a long day of work I don't have the energy to sprint the Williamsburg Bridge. Conversely I am almost always running late in the morning and my love of being a good employee / fear of being a bad one unlocks a pace in me that shocks, scares, and impresses my followers on Strava. <a href="#ref-0">↩</a></small></p>
+
+            <p><small><sup id="footnote-1">[1]</sup> Spectrum. <a href="#ref-1">↩</a></small></p>
+
+            <p><small><sup id="footnote-2">[2]</sup> I've done the calculations - I save more in rent than I spend on re-ordering packages. <a href="#ref-2">↩</a></small></p>
+
+            <p><small><sup id="footnote-3">[3]</sup> When I set my iPhone to Sleep/DND, the blinds close. When I wake up in the morning, they open. It's great. <a href="#ref-3">↩</a></small></p>
+
+            <p><small><sup id="footnote-4">[4]</sup> My apartment has a bunch of built in high frequency overhead lighting. I like a low orange light so I have a bunch of lamps in my apartment, and they turn on when the sun goes down. <a href="#ref-4">↩</a></small></p>
+
+            <p><small><sup id="footnote-5">[5]</sup> I have some ESP32s and a breadboard and a little electronics kit because it was really cheap on AliExpress.<sup><a href="#footnote-6" id="ref-6">[6]</a></sup><br>
+                    <sup id="footnote-6">[6]</sup> In a similar vein, I also bought a lockpicking set for like 20 bucks. Maybe I'll do a blog post when I figure that out too. <a href="#ref-6">↩</a> <a href="#ref-5">↩</a></small></p>
+
+            <p><small><sup id="footnote-7">[7]</sup> You can follow me at <a href="https://x.com/aldenhallak" target="_blank">@AldenHallak</a> - I'm trying to get into it. shoot me a DM or something and we can follow each other maybe. idk <a href="#ref-7">↩</a></small></p>
+
+            <p><small><sup id="footnote-8">[8]</sup> Also, very lucky that this buzzer just worked by shorting two wires together. That's not how everything works apparently, but made things really easy on my end. <a href="#ref-8">↩</a></small></p>
+
+            <p><small><sup id="footnote-9">[9]</sup> Worked here is a loose term - I definitely could trigger it from my phone, but I could no longer trigger it from the button on the door. I figured that I'd figure that out later.<sup><a href="#footnote-10" id="ref-10">[10]</a></sup><br>
+                    <sup id="footnote-10">[10]</sup> I didn't. <a href="#ref-10">↩</a> <a href="#ref-9">↩</a></small></p>
+
+            <p><small><sup id="footnote-11">[11]</sup> Cool, scary, whatever. <a href="#ref-11">↩</a></small></p>
+
+            <p><small><sup id="footnote-12">[12]</sup> I don't know what that means, but I know it's wrong. <a href="#ref-12">↩</a></small></p>
+
+            <p><small><sup id="footnote-13">[13]</sup> You can view the <a href="https://chatgpt.com/share/690234e8-3e80-8012-bccc-15c5f6ac2b10" target="_blank">full ChatGPT conversation here</a>. <a href="#ref-13">↩</a></small></p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="copyright">Alden Hallak 2025</div>
+        <div class="source"><a href="https://github.com/aldenhallak/aldenhallak.github.io">view source code</a></div>
+    </div>
+</body>
+
+</html>
